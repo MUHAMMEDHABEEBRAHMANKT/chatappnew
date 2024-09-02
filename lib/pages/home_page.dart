@@ -51,9 +51,7 @@ class HomePage extends StatelessWidget {
         },
       );
     } else {
-      return const Scaffold(
-        body: Text("ahhh"),
-      );
+      return Container();
     }
   }
 
