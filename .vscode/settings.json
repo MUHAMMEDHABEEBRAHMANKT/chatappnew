@@ -1,0 +1,5 @@
+{
+    "cmake.ignoreCMakeListsMissing": true,
+    "C_Cpp.intelliSenseEngineFallback": "enabled",
+    "C_Cpp.errorSquiggles": "enabled"
+}
