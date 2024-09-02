@@ -22,7 +22,13 @@ class HomePage extends StatelessWidget {
 
         //loading
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Text("Loading...");
+          return const Center(
+              child: Text(
+            "Loading...",
+            style: TextStyle(
+              fontSize: 20,
+            ),
+          ));
         }
         //return the list view
         return ListView(
@@ -64,7 +70,7 @@ class HomePage extends StatelessWidget {
           child: Text(
             "Home",
             style: TextStyle(
-                color: (Colors.teal.shade800),
+                color: (Theme.of(context).colorScheme.inversePrimary),
                 fontSize: 30,
                 fontWeight: FontWeight.w500),
           ),
