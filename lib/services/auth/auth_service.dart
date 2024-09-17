@@ -32,7 +32,25 @@ class AuthServices {
         return userCredential;
       }
     } on FirebaseAuthException catch (e) {
-      throw Exception(e.code);
+      if (e.code == 'network-request-failed') {
+        throw Exception('Please check your network!!');
+      } else if (e.code == 'invalid-email') {
+        throw Exception('The email address is badly formatted.');
+      } else if (e.code == 'user-disabled') {
+        throw Exception(
+            'The user account has been disabled by an administrator.');
+      } else if (e.code == 'user-not-found') {
+        throw Exception('No user found with this email.');
+      } else if (e.code == 'wrong-password') {
+        throw Exception('Incorrect password provided for that user.');
+      } else if (e.code == 'email-already-in-use') {
+        throw Exception(
+            'The email address is already in use by another account.');
+      } else if (e.code == 'weak-password') {
+        throw Exception('please provide atleast 6 charecter long');
+      } else {
+        throw Exception(e.code);
+      }
     }
   }
 
