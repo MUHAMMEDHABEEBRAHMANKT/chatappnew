@@ -10,6 +10,20 @@ class LoginPage extends StatelessWidget {
 
   //tap to go register page
   final void Function()? onTap;
+// snack bar error msg custom
+  void showConditionSnackBar(BuildContext context, String message,
+      {Color backgroundColor = Colors.red}) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(
+          message,
+          style: const TextStyle(color: Colors.white),
+        ),
+        backgroundColor: backgroundColor,
+        behavior: SnackBarBehavior.floating,
+      ),
+    );
+  }
 
   LoginPage({
     super.key,
@@ -24,23 +38,19 @@ class LoginPage extends StatelessWidget {
     // Try to login
     try {
       if (_emailController.text.isEmpty || _passwordController.text.isEmpty) {
-        showDialog(
-          context: context,
-          builder: (context) => AlertDialog(
-            title: Text(
-              "Please Enter the Details!",
-              style: TextStyle(color: Colors.red.shade700),
-            ),
-            actions: [
-              TextButton(
-                onPressed: () {
-                  Navigator.of(context).pop(); // Dismiss the dialog
-                },
-                child: const Text('OK'),
-              ),
-            ],
-          ),
+        showConditionSnackBar(
+          context,
+          "Please Enter all the details!",
         );
+        return; // Exit early if fields are empty
+      }
+      if (!_emailController.text.contains('@') ||
+          !_emailController.text.contains('.')) {
+        showConditionSnackBar(
+          context,
+          "Please provide a valid email address!",
+        );
+        return; // Exit early if fields are empty
       } else {
         await authServices.signInWithEmailAndPassword(
             _emailController.text, _passwordController.text);
@@ -95,7 +105,7 @@ class LoginPage extends StatelessWidget {
               Text(
                 "Welcome Back, You've been missed!",
                 style: TextStyle(
-                    color: Theme.of(context).colorScheme.onTertiary,
+                    color: Theme.of(context).colorScheme.tertiary,
                     fontSize: 17),
               ),
               const SizedBox(

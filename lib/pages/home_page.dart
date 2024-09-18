@@ -5,10 +5,19 @@ import 'package:mini_chat_app/pages/chat_page.dart';
 import 'package:mini_chat_app/services/auth/auth_service.dart';
 import 'package:mini_chat_app/components/my_drawer.dart';
 import 'package:mini_chat_app/services/chats/chat_services.dart';
-import 'package:mini_chat_app/services/chats/user_details.dart'; // Import UserDetails
+import 'package:mini_chat_app/models/user_details.dart'; // Import UserDetails
 
 class HomePage extends StatelessWidget {
   HomePage({super.key});
+  //function for camelcase
+  String toCamelCase(String text) {
+    return text
+        .toLowerCase()
+        .split(' ')
+        .map((str) =>
+            str.isNotEmpty ? str[0].toUpperCase() + str.substring(1) : '')
+        .join(' ');
+  }
 
   final AuthServices _authServices = AuthServices();
   final ChatServices _chatServices = ChatServices();
@@ -31,7 +40,7 @@ class HomePage extends StatelessWidget {
                     height:
                         10), // Adds some spacing between the indicator and text
                 Text(
-                  "Loading",
+                  "Loading...",
                   style: TextStyle(fontSize: 17),
                 ),
               ],
@@ -57,18 +66,19 @@ class HomePage extends StatelessWidget {
 
   Widget _buildUserListItem(UserDetails user, BuildContext context) {
     final currentUser = _authServices.getCurrentUser();
+    // Ensure you are comparing email correctly
     // ignore: unrelated_type_equality_checks
     if (user.email != currentUser) {
       return UserTile(
-        text: user
-            .email, //hear i need the users name when they entered registering
+        text: toCamelCase(user.name),
+        fontSize: 16, // Specify your desired font size here
         onTap: () {
           Navigator.push(
             context,
             MaterialPageRoute(
               builder: (context) => ChatPage(
                 receiverEmail: user.email,
-                reciverID: user.uid,
+                receiverID: user.uid,
               ),
             ),
           );
@@ -83,13 +93,12 @@ class HomePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Padding(
-          padding: const EdgeInsets.only(left: 85),
+        title: Center(
           child: Text(
-            "Home",
+            "U S E R S",
             style: TextStyle(
               color: Theme.of(context).colorScheme.inversePrimary,
-              fontSize: 30,
+              fontSize: 20,
               fontWeight: FontWeight.w500,
             ),
           ),

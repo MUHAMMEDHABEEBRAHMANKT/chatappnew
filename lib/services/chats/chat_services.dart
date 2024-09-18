@@ -2,7 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:mini_chat_app/models/message.dart';
-import 'user_details.dart';
+import '../../models/user_details.dart';
 
 class ChatServices extends ChangeNotifier {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
@@ -36,26 +36,32 @@ class ChatServices extends ChangeNotifier {
               doc.data()['email'] != currentUser.email &&
               !blockedUserIDs.contains(doc.id))
           .map((doc) => UserDetails.fromFirestore(
-              doc.data(), doc.id)) // Convert to UserDetails
+              doc.data(), doc.id)) // Convert to UserDetails including name
           .toList();
     });
   }
 
   // Send message
-  Future<void> sendMessage(String reciverID, String message) async {
+  Future<void> sendMessage(String receiverID, String message) async {
     final String currentUserID = _auth.currentUser!.uid;
     final String currentUserEmail = _auth.currentUser!.email!;
     final Timestamp timestamp = Timestamp.now();
 
+    // Fetch sender's name
+    final senderDoc =
+        await _firestore.collection('Users').doc(currentUserID).get();
+    final senderName = senderDoc.data()?['name'] ?? '';
+
     Message newMessage = Message(
       senderID: currentUserID,
       senderEmail: currentUserEmail,
-      reciverID: reciverID,
+      senderName: senderName, // Include sender's name
+      receiverID: receiverID,
       message: message,
       timestamp: timestamp,
     );
 
-    List<String> ids = [currentUserID, reciverID];
+    List<String> ids = [currentUserID, receiverID];
     ids.sort(); // Sort to ensure uniqueness
     String chatroomID = ids.join('_');
 
@@ -100,7 +106,7 @@ class ChatServices extends ChangeNotifier {
         .doc(currentUser!.uid)
         .collection('BlockedUsers')
         .doc(userID)
-        .set({});
+        .set({}); // Empty document
     notifyListeners();
   }
 

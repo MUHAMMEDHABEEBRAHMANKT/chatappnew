@@ -61,16 +61,18 @@ class AuthServices {
   }
 
   //sign up
+  // Update the signUpWithEmailAndPassword method
   Future<UserCredential> signUpWithEmailAndPassword(
-      String email, password) async {
+      String email, String password, String name) async {
     try {
       UserCredential userCredential = await authServices
           .createUserWithEmailAndPassword(email: email, password: password);
-      //save user info in a spearete document
-      _firestore.collection("Users").doc(userCredential.user!.uid).set(
+      // Save user info in a separate document
+      await _firestore.collection("Users").doc(userCredential.user!.uid).set(
         {
           'uid': userCredential.user!.uid,
           'email': email,
+          'name': name, // Add the name field
         },
       );
       return userCredential;

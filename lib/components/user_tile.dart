@@ -3,7 +3,14 @@ import 'package:flutter/material.dart';
 class UserTile extends StatelessWidget {
   final String text;
   final void Function()? onTap;
-  const UserTile({super.key, required this.text, required this.onTap});
+  final double fontSize; // Add a fontSize parameter
+
+  const UserTile({
+    super.key,
+    required this.text,
+    required this.onTap,
+    this.fontSize = 16, // Default font size
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -18,13 +25,18 @@ class UserTile extends StatelessWidget {
         padding: const EdgeInsets.all(20),
         child: Row(
           children: [
-            //icon
-            const Icon(Icons.person),
-            const SizedBox(
-              width: 20,
+            // Icon
+            Icon(
+              Icons.person,
+              color: Theme.of(context).colorScheme.primary,
             ),
-            //user name
-            Text(text),
+            const SizedBox(width: 20),
+            // User name
+            Text(
+              text,
+              style:
+                  TextStyle(fontSize: fontSize), // Use the provided font size
+            ),
           ],
         ),
       ),

@@ -3,7 +3,7 @@ import 'package:mini_chat_app/themes/dark_mode.dart';
 import 'package:mini_chat_app/themes/light_mode.dart';
 
 class ThemeProvider extends ChangeNotifier {
-  ThemeData _themedata = lightMode;
+  ThemeData _themedata = darkMode;
 
   ThemeData get themeData => _themedata;
 
