@@ -108,6 +108,7 @@ class LoginPage extends StatelessWidget {
                 hinttext: "Email",
                 obscuretxt: false,
                 controller: _emailController,
+                focusNode: null,
               ),
               //password txt field
               const SizedBox(
@@ -118,6 +119,7 @@ class LoginPage extends StatelessWidget {
                 hinttext: "Password",
                 obscuretxt: true,
                 controller: _passwordController,
+                focusNode: null,
               ),
 
               const SizedBox(

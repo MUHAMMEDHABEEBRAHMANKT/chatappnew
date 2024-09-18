@@ -119,18 +119,21 @@ class RegisterPage extends StatelessWidget {
                 hinttext: "Email",
                 obscuretxt: false,
                 controller: _emailController,
+                focusNode: null,
               ),
               const SizedBox(height: 10),
               MyTextField(
                 hinttext: "Password",
                 obscuretxt: true,
                 controller: _passwordController,
+                focusNode: null,
               ),
               const SizedBox(height: 10),
               MyTextField(
                 hinttext: "Retype Password",
                 obscuretxt: true,
                 controller: _cpasswordController,
+                focusNode: null,
               ),
               const SizedBox(height: 25),
               MyBtn(

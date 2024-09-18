@@ -1,13 +1,14 @@
-// user_details.dart
 class UserDetails {
   final String uid;
   final String email;
 
   UserDetails({required this.uid, required this.email});
 
-  factory UserDetails.fromFirestore(Map<String, dynamic> data) {
+  // Updated to include uid from the Firestore document ID
+  factory UserDetails.fromFirestore(
+      Map<String, dynamic> data, String documentID) {
     return UserDetails(
-      uid: data['uid'] as String? ?? '',
+      uid: documentID, // Set uid to the document ID
       email: data['email'] as String? ?? '',
     );
   }
