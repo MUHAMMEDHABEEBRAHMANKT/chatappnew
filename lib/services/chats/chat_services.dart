@@ -2,7 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:mini_chat_app/models/message.dart';
-import '../../models/user_details.dart';
+import 'package:mini_chat_app/models/user_details.dart';
 
 class ChatServices extends ChangeNotifier {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
@@ -36,32 +36,26 @@ class ChatServices extends ChangeNotifier {
               doc.data()['email'] != currentUser.email &&
               !blockedUserIDs.contains(doc.id))
           .map((doc) => UserDetails.fromFirestore(
-              doc.data(), doc.id)) // Convert to UserDetails including name
+              doc.data(), doc.id)) // Convert to UserDetails
           .toList();
     });
   }
 
   // Send message
-  Future<void> sendMessage(String receiverID, String message) async {
+  Future<void> sendMessage(String reciverID, String message) async {
     final String currentUserID = _auth.currentUser!.uid;
     final String currentUserEmail = _auth.currentUser!.email!;
     final Timestamp timestamp = Timestamp.now();
 
-    // Fetch sender's name
-    final senderDoc =
-        await _firestore.collection('Users').doc(currentUserID).get();
-    final senderName = senderDoc.data()?['name'] ?? '';
-
     Message newMessage = Message(
       senderID: currentUserID,
       senderEmail: currentUserEmail,
-      senderName: senderName, // Include sender's name
-      receiverID: receiverID,
+      reciverID: reciverID,
       message: message,
       timestamp: timestamp,
     );
 
-    List<String> ids = [currentUserID, receiverID];
+    List<String> ids = [currentUserID, reciverID];
     ids.sort(); // Sort to ensure uniqueness
     String chatroomID = ids.join('_');
 
@@ -106,7 +100,7 @@ class ChatServices extends ChangeNotifier {
         .doc(currentUser!.uid)
         .collection('BlockedUsers')
         .doc(userID)
-        .set({}); // Empty document
+        .set({});
     notifyListeners();
   }
 

@@ -18,7 +18,7 @@ class RegisterPage extends StatefulWidget {
 }
 
 class _RegisterPageState extends State<RegisterPage> {
-  final TextEditingController _nameController = TextEditingController();
+  // final TextEditingController _nameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _cpasswordController = TextEditingController();
@@ -68,7 +68,7 @@ class _RegisterPageState extends State<RegisterPage> {
               setState(() {
                 _isTermsRead = true; // Mark terms as read
                 // Enable the checkbox after agreeing
-                _isChecked = false; // Ensure checkbox starts as unchecked
+                _isChecked = true; // Ensure checkbox starts as unchecked
               });
             },
           ),
@@ -109,10 +109,10 @@ class _RegisterPageState extends State<RegisterPage> {
     }
 
     // Check if fields are empty
-    if (_nameController.text.isEmpty ||
+    if ( //_nameController.text.isEmpty ||
         _emailController.text.isEmpty ||
-        _passwordController.text.isEmpty ||
-        _cpasswordController.text.isEmpty) {
+            _passwordController.text.isEmpty ||
+            _cpasswordController.text.isEmpty) {
       showConditionSnackBar(
         context,
         "Please Enter all the details!",
@@ -121,13 +121,13 @@ class _RegisterPageState extends State<RegisterPage> {
     }
 
     // Validate name length
-    if (_nameController.text.length > 20) {
-      showConditionSnackBar(
-        context,
-        "Name cannot exceed 20 characters!",
-      );
-      return; // Exit early if fields are empty/ Exit early if name is too long
-    }
+    // if (_nameController.text.length > 20) {
+    //   showConditionSnackBar(
+    //     context,
+    //     "Name cannot exceed 20 characters!",
+    //   );
+    //   return; // Exit early if fields are empty/ Exit early if name is too long
+    // }
 
     // Validate password length
     if (_passwordController.text.length < 6) {
@@ -162,7 +162,6 @@ class _RegisterPageState extends State<RegisterPage> {
       await authServices.signUpWithEmailAndPassword(
         _emailController.text,
         _passwordController.text,
-        _nameController.text, // Pass the name
       );
       // Registration successful, navigate to another page or show a success message
     } catch (e) {
@@ -199,13 +198,13 @@ class _RegisterPageState extends State<RegisterPage> {
                     fontWeight: FontWeight.w700),
               ),
               const SizedBox(height: 50),
-              MyTextField(
-                hinttext: "Name",
-                obscuretxt: false,
-                controller: _nameController,
-                focusNode: null,
-              ),
-              const SizedBox(height: 10),
+              // MyTextField(
+              //   hinttext: "Name",
+              //   obscuretxt: false,
+              //   controller: _nameController,
+              //   focusNode: null,
+              // ),
+              // const SizedBox(height: 10),
               MyTextField(
                 hinttext: "Email",
                 obscuretxt: false,

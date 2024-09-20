@@ -4,16 +4,15 @@ import 'package:mini_chat_app/components/chat_bubble.dart';
 import 'package:mini_chat_app/components/my_text_field.dart';
 import 'package:mini_chat_app/services/auth/auth_service.dart';
 import 'package:mini_chat_app/services/chats/chat_services.dart';
-import 'package:mini_chat_app/models/user_details.dart'; // Import UserDetails model
 
 class ChatPage extends StatefulWidget {
   final String receiverEmail;
-  final String receiverID;
+  final String reciverID;
 
   const ChatPage({
     super.key,
     required this.receiverEmail,
-    required this.receiverID,
+    required this.reciverID,
   });
 
   @override
@@ -21,26 +20,16 @@ class ChatPage extends StatefulWidget {
 }
 
 class _ChatPageState extends State<ChatPage> {
-  String toCamelCase(String text) {
-    return text
-        .toLowerCase()
-        .split(' ')
-        .map((str) =>
-            str.isNotEmpty ? str[0].toUpperCase() + str.substring(1) : '')
-        .join(' ');
-  }
-
   final TextEditingController _messageController = TextEditingController();
   final ChatServices _chatServices = ChatServices();
   final AuthServices _authServices = AuthServices();
   final ScrollController _scrollController = ScrollController();
   FocusNode myFocusNode = FocusNode();
-  String receiverName = ''; // Variable to store receiver's name
 
   @override
   void initState() {
     super.initState();
-    _fetchReceiverName();
+
     myFocusNode.addListener(() {
       if (myFocusNode.hasFocus) {
         WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -53,41 +42,6 @@ class _ChatPageState extends State<ChatPage> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       scrollDown();
     });
-
-    // Fetch receiver's name from Firestore
-    _fetchReceiverName();
-  }
-
-  // String receiverName1 = '';
-  final double _fontSize = 17.0; // Define your font size here
-
-  Future<void> _fetchReceiverName() async {
-    try {
-      DocumentSnapshot userDoc = await FirebaseFirestore.instance
-          .collection('Users')
-          .doc(widget.receiverID)
-          .get();
-      if (userDoc.exists) {
-        UserDetails userDetails = UserDetails.fromFirestore(
-          userDoc.data() as Map<String, dynamic>,
-          widget.receiverID,
-        );
-        setState(() {
-          receiverName =
-              toCamelCase(userDetails.name); // Update receiver's name
-        });
-      }
-    } catch (e) {
-      // Handle error if necessary
-      showDialog(
-        // ignore: use_build_context_synchronously
-        context: context,
-        builder: (BuildContext context) => AlertDialog(
-          title: const Text("Error"),
-          content: Text(e.toString()),
-        ),
-      );
-    }
   }
 
   void scrollDown() {
@@ -111,20 +65,17 @@ class _ChatPageState extends State<ChatPage> {
   void sendMessage() async {
     if (_messageController.text.isNotEmpty) {
       await _chatServices.sendMessage(
-          widget.receiverID, _messageController.text);
+          widget.reciverID, _messageController.text);
       _messageController.clear();
-      scrollDown(); // Scroll down after sending a message
     }
+    scrollDown(); // Scroll down after sending a message
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(
-          receiverName,
-          style: TextStyle(fontSize: _fontSize), // Apply the font size here
-        ),
+        title: Text(widget.receiverEmail),
       ),
       body: Column(
         children: [
@@ -138,10 +89,18 @@ class _ChatPageState extends State<ChatPage> {
   Widget _buildMessageList() {
     String senderID = _authServices.getCurrentUser()!.uid;
     return StreamBuilder<QuerySnapshot>(
-      stream: _chatServices.getMessages(widget.receiverID, senderID),
+      stream: _chatServices.getMessages(widget.reciverID, senderID),
       builder: (context, snapshot) {
         if (snapshot.hasError) {
-          return const Center(child: Text("Error loading messages"));
+          // Show Snackbar for error
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text("Error loading messages"),
+                duration: Duration(seconds: 2),
+              ),
+            );
+          });
         }
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Center(
@@ -176,7 +135,7 @@ class _ChatPageState extends State<ChatPage> {
       padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
       child: ChatBubble(
         isCurrentUser: isCurrentUser,
-        messsage: data['message'],
+        message: data['message'],
         messageID: doc.id,
         userID: data['senderID'],
       ),

@@ -1,21 +1,15 @@
 class UserDetails {
   final String uid;
   final String email;
-  final String name; // Add name field
 
-  UserDetails({
-    required this.uid,
-    required this.email,
-    required this.name, // Include name in constructor
-  });
+  UserDetails({required this.uid, required this.email});
 
-  // Updated to include uid and name from the Firestore document
+  // Updated to include uid from the Firestore document ID
   factory UserDetails.fromFirestore(
       Map<String, dynamic> data, String documentID) {
     return UserDetails(
-      uid: documentID,
-      email: data['email'] as String? ?? '', // Handle email field
-      name: data['name'] as String? ?? '', // Handle name field
+      uid: documentID, // Set uid to the document ID
+      email: data['email'] as String? ?? '',
     );
   }
 
@@ -23,7 +17,6 @@ class UserDetails {
     return {
       'uid': uid,
       'email': email,
-      'name': name, // Add name to map
     };
   }
 }

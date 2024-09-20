@@ -1,23 +1,13 @@
-// home_page.dart
 import 'package:flutter/material.dart';
 import 'package:mini_chat_app/components/user_tile.dart';
+import 'package:mini_chat_app/models/user_details.dart';
 import 'package:mini_chat_app/pages/chat_page.dart';
 import 'package:mini_chat_app/services/auth/auth_service.dart';
 import 'package:mini_chat_app/components/my_drawer.dart';
 import 'package:mini_chat_app/services/chats/chat_services.dart';
-import 'package:mini_chat_app/models/user_details.dart'; // Import UserDetails
 
 class HomePage extends StatelessWidget {
   HomePage({super.key});
-  //function for camelcase
-  String toCamelCase(String text) {
-    return text
-        .toLowerCase()
-        .split(' ')
-        .map((str) =>
-            str.isNotEmpty ? str[0].toUpperCase() + str.substring(1) : '')
-        .join(' ');
-  }
 
   final AuthServices _authServices = AuthServices();
   final ChatServices _chatServices = ChatServices();
@@ -27,7 +17,15 @@ class HomePage extends StatelessWidget {
       stream: _chatServices.getUsersStreamExcludingBlocked(),
       builder: (context, snapshot) {
         if (snapshot.hasError) {
-          return const Text("Error");
+          // Show Snackbar for error
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text("Error"),
+                duration: Duration(seconds: 2),
+              ),
+            );
+          });
         }
 
         if (snapshot.connectionState == ConnectionState.waiting) {
@@ -70,15 +68,15 @@ class HomePage extends StatelessWidget {
     // ignore: unrelated_type_equality_checks
     if (user.email != currentUser) {
       return UserTile(
-        text: toCamelCase(user.name),
+        text: user.email,
         fontSize: 16, // Specify your desired font size here
         onTap: () {
           Navigator.push(
             context,
             MaterialPageRoute(
               builder: (context) => ChatPage(
-                receiverEmail: user.email,
-                receiverID: user.uid,
+                receiverEmail: user.email, // Ensure correct parameter
+                reciverID: user.uid, // Ensure correct parameter
               ),
             ),
           );

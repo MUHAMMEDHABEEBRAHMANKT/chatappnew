@@ -1,11 +1,9 @@
-// ignore_for_file: use_build_context_synchronously
-
 import 'package:flutter/material.dart';
 import 'package:mini_chat_app/services/chats/chat_services.dart';
 import 'package:mini_chat_app/pages/home_page.dart'; // Ensure you import HomePage
 
 class ChatBubble extends StatelessWidget {
-  final String messsage;
+  final String message; // Fixed typo from 'messsage' to 'message'
   final bool isCurrentUser;
   final String messageID;
   final String userID;
@@ -13,7 +11,7 @@ class ChatBubble extends StatelessWidget {
   const ChatBubble({
     super.key,
     required this.isCurrentUser,
-    required this.messsage,
+    required this.message,
     required this.messageID,
     required this.userID,
   });
@@ -76,8 +74,8 @@ class ChatBubble extends StatelessWidget {
           // Report button
           TextButton(
             onPressed: () async {
-              await chatServices.reportUser(
-                  messageID, userID); // Use the instance
+              await chatServices.reportUser(messageID, userID);
+              if (!context.mounted) return; // Check if context is still valid
               Navigator.pop(context);
               ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
                 content: Text("Message Reported!!"),
@@ -106,7 +104,8 @@ class ChatBubble extends StatelessWidget {
           // Block button
           TextButton(
             onPressed: () async {
-              await chatServices.blockUser(userID); // Use the instance
+              await chatServices.blockUser(userID);
+              if (!context.mounted) return; // Check if context is still valid
               Navigator.pop(context);
               ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
                 content: Text("User Blocked!!"),
@@ -143,7 +142,7 @@ class ChatBubble extends StatelessWidget {
         padding: const EdgeInsets.all(16),
         margin: const EdgeInsets.symmetric(vertical: 0, horizontal: 14),
         child: Text(
-          messsage,
+          message, // Fixed typo from 'messsage' to 'message'
           style: const TextStyle(color: Colors.white),
         ),
       ),
