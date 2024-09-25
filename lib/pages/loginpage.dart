@@ -58,24 +58,12 @@ class LoginPage extends StatelessWidget {
     }
     // Catch errors
     catch (e) {
-      // Show error dialog
-      // ignore: use_build_context_synchronously
-      showDialog(
+      showConditionSnackBar(
         // ignore: use_build_context_synchronously
-        context: context,
-        builder: (context) => AlertDialog(
-          title: const Text('Error'),
-          content: Text(e.toString()),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop(); // Dismiss the dialog
-              },
-              child: const Text('Close'),
-            ),
-          ],
-        ),
+        context,
+        e.toString(),
       );
+      return; // Exit early if fields are empty
     }
   }
 
