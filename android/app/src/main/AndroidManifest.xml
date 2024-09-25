@@ -1,6 +1,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
     <application
-        android:label="mini_chat_app"
+        <application
+    android:label="Mini Chat App"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity
