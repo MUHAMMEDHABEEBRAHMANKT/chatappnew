@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mini_chat_app/components/user_tile.dart';
+import 'package:mini_chat_app/models/functions.dart';
 import 'package:mini_chat_app/models/user_details.dart';
 import 'package:mini_chat_app/pages/chat_page.dart';
 import 'package:mini_chat_app/services/auth/auth_service.dart';
@@ -68,7 +69,8 @@ class HomePage extends StatelessWidget {
     // ignore: unrelated_type_equality_checks
     if (user.email != currentUser) {
       return UserTile(
-        text: user.email,
+        text: toCamelCase(extractNameFromEmail(user
+            .email)), //extracting the name d=from email and passing to camelCase
         fontSize: 16, // Specify your desired font size here
         onTap: () {
           Navigator.push(
@@ -76,7 +78,7 @@ class HomePage extends StatelessWidget {
             MaterialPageRoute(
               builder: (context) => ChatPage(
                 receiverEmail: user.email, // Ensure correct parameter
-                reciverID: user.uid, // Ensure correct parameter
+                receiverID: user.uid, // Ensure correct parameter
               ),
             ),
           );
@@ -88,16 +90,20 @@ class HomePage extends StatelessWidget {
   }
 
   @override
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Center(
-          child: Text(
-            "U S E R S",
-            style: TextStyle(
-              color: Theme.of(context).colorScheme.inversePrimary,
-              fontSize: 20,
-              fontWeight: FontWeight.w500,
+          child: Transform.translate(
+            offset: const Offset(-35, 0), // Moves left by 20 pixels
+            child: Text(
+              "U S E R S",
+              style: TextStyle(
+                color: Theme.of(context).colorScheme.inversePrimary,
+                fontSize: 20,
+                fontWeight: FontWeight.w500,
+              ),
             ),
           ),
         ),

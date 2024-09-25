@@ -18,7 +18,7 @@ class RegisterPage extends StatefulWidget {
 }
 
 class _RegisterPageState extends State<RegisterPage> {
-  // final TextEditingController _nameController = TextEditingController();
+  final TextEditingController _nameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _cpasswordController = TextEditingController();
@@ -51,9 +51,16 @@ class _RegisterPageState extends State<RegisterPage> {
               Text(
                   'Please read and agree to the following terms before registering:'),
               SizedBox(height: 20),
-              Text('1. Name must not exceed 20 characters.'),
+              Text(
+                '1. Please add your name in the email before entering the @.... ',
+                style: TextStyle(fontSize: 19),
+              ),
+              SizedBox(height: 17),
               Text('2. Password must be at least 6 characters long.'),
-              Text('3. Please provide a valid email address.'),
+              SizedBox(height: 17),
+              Text(
+                  '3. Reseting of password impossible ,so don\'t forgot your password 😊',
+                  style: TextStyle(fontSize: 19)),
               SizedBox(height: 20),
               Text(
                   'By checking the box, you agree to our Terms and Conditions.'),
@@ -121,13 +128,13 @@ class _RegisterPageState extends State<RegisterPage> {
     }
 
     // Validate name length
-    // if (_nameController.text.length > 20) {
-    //   showConditionSnackBar(
-    //     context,
-    //     "Name cannot exceed 20 characters!",
-    //   );
-    //   return; // Exit early if fields are empty/ Exit early if name is too long
-    // }
+    if (_nameController.text.length > 20) {
+      showConditionSnackBar(
+        context,
+        "Name cannot exceed 20 characters!",
+      );
+      return; // Exit early if fields are empty/ Exit early if name is too long
+    }
 
     // Validate password length
     if (_passwordController.text.length < 6) {
@@ -198,13 +205,6 @@ class _RegisterPageState extends State<RegisterPage> {
                     fontWeight: FontWeight.w700),
               ),
               const SizedBox(height: 50),
-              // MyTextField(
-              //   hinttext: "Name",
-              //   obscuretxt: false,
-              //   controller: _nameController,
-              //   focusNode: null,
-              // ),
-              // const SizedBox(height: 10),
               MyTextField(
                 hinttext: "Email",
                 obscuretxt: false,

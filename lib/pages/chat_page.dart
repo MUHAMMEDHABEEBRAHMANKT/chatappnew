@@ -4,15 +4,16 @@ import 'package:mini_chat_app/components/chat_bubble.dart';
 import 'package:mini_chat_app/components/my_text_field.dart';
 import 'package:mini_chat_app/services/auth/auth_service.dart';
 import 'package:mini_chat_app/services/chats/chat_services.dart';
+import 'package:mini_chat_app/models/functions.dart';
 
 class ChatPage extends StatefulWidget {
   final String receiverEmail;
-  final String reciverID;
+  final String receiverID;
 
   const ChatPage({
     super.key,
     required this.receiverEmail,
-    required this.reciverID,
+    required this.receiverID,
   });
 
   @override
@@ -29,43 +30,42 @@ class _ChatPageState extends State<ChatPage> {
   @override
   void initState() {
     super.initState();
-
+//event listner to focus the node
     myFocusNode.addListener(() {
       if (myFocusNode.hasFocus) {
-        WidgetsBinding.instance.addPostFrameCallback((_) {
-          scrollDown();
-        });
+        // Scroll to show last message above keyboard when keyboard opens
+        Future.delayed(const Duration(milliseconds: 500), () => scrollDown());
       }
     });
 
-    // Ensure scrolling down after the first frame
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      scrollDown();
-    });
+    //wait for the list viw to build and scorll to bottom
+    Future.delayed(const Duration(milliseconds: 500), () => scrollDown());
   }
 
+  // Scroll to the bottom of the chat list
   void scrollDown() {
-    if (_scrollController.hasClients) {
-      _scrollController.animateTo(
-        _scrollController.position.maxScrollExtent,
-        duration: const Duration(milliseconds: 300),
-        curve: Curves.easeOut,
-      );
-    }
+    _scrollController.animateTo(
+      _scrollController.position.maxScrollExtent,
+      duration: const Duration(seconds: 1),
+      curve: Curves.fastOutSlowIn,
+    );
   }
 
   @override
   void dispose() {
     myFocusNode.dispose();
     _messageController.dispose();
-    _scrollController.dispose();
     super.dispose();
   }
 
+  // Handle sending messages
   void sendMessage() async {
+    //if there is somthing inside the texbox
     if (_messageController.text.isNotEmpty) {
+      //send msg
       await _chatServices.sendMessage(
-          widget.reciverID, _messageController.text);
+          widget.receiverID, _messageController.text);
+      //clear the controller
       _messageController.clear();
     }
     scrollDown(); // Scroll down after sending a message
@@ -75,21 +75,25 @@ class _ChatPageState extends State<ChatPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.receiverEmail),
+        title: Text(
+          toCamelCase(extractNameFromEmail(widget.receiverEmail)),
+          style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+        ),
       ),
       body: Column(
         children: [
-          Expanded(child: _buildMessageList()),
-          _buildUserInput(),
+          Expanded(child: _buildMessageList()), // Messages list
+          _buildUserInput(), // Message input field
         ],
       ),
     );
   }
 
+  // Build the list of chat messages without showing a loader
   Widget _buildMessageList() {
     String senderID = _authServices.getCurrentUser()!.uid;
     return StreamBuilder<QuerySnapshot>(
-      stream: _chatServices.getMessages(widget.reciverID, senderID),
+      stream: _chatServices.getMessages(widget.receiverID, senderID),
       builder: (context, snapshot) {
         if (snapshot.hasError) {
           // Show Snackbar for error
@@ -101,31 +105,23 @@ class _ChatPageState extends State<ChatPage> {
               ),
             );
           });
-        }
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                CircularProgressIndicator(),
-                SizedBox(height: 10),
-                Text("Loading...", style: TextStyle(fontSize: 17)),
-              ],
-            ),
-          );
+          return const SizedBox.shrink(); // Return an empty view on error
         }
         if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
           return const Center(child: Text("Start Typing..."));
+        } else {
+          return ListView(
+            controller: _scrollController,
+            children: snapshot.data!.docs
+                .map((doc) => _buildMessageItem(doc))
+                .toList(),
+          );
         }
-        return ListView(
-          controller: _scrollController,
-          children:
-              snapshot.data!.docs.map((doc) => _buildMessageItem(doc)).toList(),
-        );
       },
     );
   }
 
+  // Build each individual message item
   Widget _buildMessageItem(DocumentSnapshot doc) {
     Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
     bool isCurrentUser =
@@ -142,6 +138,7 @@ class _ChatPageState extends State<ChatPage> {
     );
   }
 
+  // Build the user input field and send button
   Widget _buildUserInput() {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 0),
