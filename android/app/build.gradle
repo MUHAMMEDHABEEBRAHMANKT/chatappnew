@@ -26,6 +26,14 @@ if (flutterVersionName == null) {
 }
 
 android {
+     signingConfigs {
+        release {
+            keyAlias 'your_key_alias'
+            keyPassword 'your_key_password'
+            storeFile file('my-release-key.jks') // Use just the filename since it's in the same directory
+            storePassword 'your_keystore_password'
+        }
+    }
     namespace "com.example.mini_chat_app"
     compileSdkVersion flutter.compileSdkVersion
     ndkVersion flutter.ndkVersion
@@ -58,7 +66,7 @@ android {
         release {
             // TODO: Add your own signing config for the release build.
             // Signing with the debug keys for now, so `flutter run --release` works.
-            signingConfig signingConfigs.debug
+           signingConfig signingConfigs.release
         }
     }
 }
