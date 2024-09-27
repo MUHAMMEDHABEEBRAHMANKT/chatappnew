@@ -1,5 +1,7 @@
 # mini_chat_app
-
+- **Feature 1**: Description of feature 1.
+- **Feature 2**: Description of feature 2.
+- **Feature 3**: Description of feature 3.
 A new Flutter project.
 
 This project is a basic chating functions integrated (send and rercive message)
