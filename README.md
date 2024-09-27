@@ -1,8 +1,12 @@
-# mini_chat_app
+### mini_chat_app
 
-A new Flutter project.
+# A new Flutter project.
 
-This project is a basic chating functions integrated (send and rercive message)
+This project is a basic chating application developed using flutter
+
+- **Feature 1**: send and recive the messages
+- **Feature 2**: block/unblock the users
+- **Feature 3**: theme change
 
 # Full content
 
