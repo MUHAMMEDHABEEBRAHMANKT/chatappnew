@@ -1,6 +1,6 @@
 ### mini_chat_app
 
-# A new Flutter project.
+# A New Flutter Project.
 
 This project is a basic chating application developed using flutter
 
