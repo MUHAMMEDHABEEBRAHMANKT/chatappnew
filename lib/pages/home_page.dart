@@ -22,11 +22,14 @@ class HomePage extends StatelessWidget {
           WidgetsBinding.instance.addPostFrameCallback((_) {
             ScaffoldMessenger.of(context).showSnackBar(
               const SnackBar(
-                content: Text("Error"),
+                content: Text("Error fetching data"),
                 duration: Duration(seconds: 2),
               ),
             );
           });
+          return const Center(
+            child: Text("An error occurred."),
+          );
         }
 
         if (snapshot.connectionState == ConnectionState.waiting) {
@@ -35,9 +38,7 @@ class HomePage extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 CircularProgressIndicator(),
-                SizedBox(
-                    height:
-                        10), // Adds some spacing between the indicator and text
+                SizedBox(height: 10),
                 Text(
                   "Loading...",
                   style: TextStyle(fontSize: 17),
@@ -47,8 +48,18 @@ class HomePage extends StatelessWidget {
           );
         }
 
-        if (!snapshot.hasData || snapshot.data == null) {
-          return const Text("No Data Available Right Now!!");
+        if (!snapshot.hasData ||
+            snapshot.data == null ||
+            snapshot.data!.isEmpty) {
+          // Display message for no data
+          return const Center(
+            child: Text(
+              "No Data Available Right Now!!",
+              style: TextStyle(
+                fontSize: 17,
+              ),
+            ),
+          );
         }
 
         List<UserDetails> users = snapshot.data!;
@@ -65,20 +76,17 @@ class HomePage extends StatelessWidget {
 
   Widget _buildUserListItem(UserDetails user, BuildContext context) {
     final currentUser = _authServices.getCurrentUser();
-    // Ensure you are comparing email correctly
-    // ignore: unrelated_type_equality_checks
-    if (user.email != currentUser) {
+    if (user.email != currentUser?.email) {
       return UserTile(
-        text: toCamelCase(extractNameFromEmail(user
-            .email)), //extracting the name d=from email and passing to camelCase
-        fontSize: 16, // Specify your desired font size here
+        text: toCamelCase(extractNameFromEmail(user.email)),
+        fontSize: 16,
         onTap: () {
           Navigator.push(
             context,
             MaterialPageRoute(
               builder: (context) => ChatPage(
-                receiverEmail: user.email, // Ensure correct parameter
-                receiverID: user.uid, // Ensure correct parameter
+                receiverEmail: user.email,
+                receiverID: user.uid,
               ),
             ),
           );
@@ -90,13 +98,12 @@ class HomePage extends StatelessWidget {
   }
 
   @override
-  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Center(
           child: Transform.translate(
-            offset: const Offset(-35, 0), // Moves left by 20 pixels
+            offset: const Offset(-35, 0),
             child: Text(
               "U S E R S",
               style: TextStyle(
